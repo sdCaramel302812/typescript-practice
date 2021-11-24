@@ -6,6 +6,11 @@ function main() {
     arrayType();
     tupleType();
     enumType();
+    anyType();
+    neverType();
+    unionType();
+    typeAlias();
+    stringLiteralType();
 }
 
 function numberType() {
@@ -151,6 +156,76 @@ function enumType() {
     if (request.status === ApprovalStatus.approved) {
         console.log('request has been approved');
     }
+    console.log();
+}
+
+// compiler will skip type checking
+// use when you don't know the type in compile time or to migrage JavaScript to TypeScript
+function anyType() {
+    const json = `{"latitude": 10.11, "longitude": 12.12}`;
+    const location = JSON.parse(json);
+    console.log(location);
+    console.log(location.x);
+    console.log();
+}
+
+// use never type to represent the return value that always throws errors
+function neverType() {
+    function raiseError(message: string): never {
+        throw new Error(message);
+    }
+    // raiseError('never type testing');
+
+    let neverOccur = () => {
+        throw new Error('never occur');
+    }
+    function fn(a: string | number): boolean {
+        if (typeof a === 'string') {
+            return true;
+        } else if (typeof a === 'number') {
+            return false;
+        }
+
+        return neverOccur();
+    }
+
+    console.log(fn(123));
+    console.log();
+}
+
+// use union type instead of any to accept multiple types
+function unionType() {
+    function add(a: number | string, b: number | string) {
+        if (typeof a === 'number' && typeof b === 'number') {
+            return a + b;
+        }
+        if (typeof a === 'string' && typeof b === 'string') {
+            return a.concat(b);
+        }
+
+        throw new Error('parameter must be number or string');
+    }
+    console.log(add(10, 20));
+    console.log(add('10', '20'));
+    console.log();
+}
+
+function typeAlias() {
+    type alphanumeric = string | number;
+    let input: alphanumeric;
+    input = 10;         // valid
+    input = '10';       // valid
+    //input = false;    // invalid
+}
+
+// the type only accept specific string literal
+function stringLiteralType() {
+    type MouseEvent = 'click' | 'hover' | 'mouseup' | 'mousedown';
+    let mouseEvent: MouseEvent;
+    mouseEvent = 'click';
+    mouseEvent = 'hover';
+    //mouseEvent = 'mouseover';     // invalid
+    console.log(mouseEvent);
     console.log();
 }
 
